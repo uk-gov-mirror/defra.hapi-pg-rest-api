@@ -13,88 +13,85 @@
  * @param {Function} config.connection - DB connection, e.g. created with Pool
  */
 class RestHAPIInterface {
-  constructor(config) {
+  constructor (config) {
     this.config = config;
   }
 
   // Methods
-  findOne(request, reply) {
+  static findOne () {
   }
-  findMany(request, reply) {
+  static findMany () {
   }
-  create(request, reply) {
+  static create () {
   }
-  updateOne(request, reply) {
+  static updateOne () {
   }
-  updateMany(request, reply) {
+  static updateMany () {
   }
-  replace(request, reply) {
+  static replace () {
   }
-  delete(request, reply) {
+  static delete () {
   }
-  schemaDefinition(request, reply) {
-  }
-
-  /**
-   * Get HAPI API handler for GET single record
-   * @return Object
-   */
-  findManyRoute() {
-    return this._getRoute('GET', this.findMany.bind(this), true);
+  static schemaDefinition () {
   }
 
   /**
    * Get HAPI API handler for GET single record
    * @return Object
    */
-  findOneRoute() {
-    return this._getRoute('GET', this.findOne.bind(this));
+  findManyRoute () {
+    return this.getRoute('GET', this.findMany.bind(this), true);
+  }
+
+  /**
+   * Get HAPI API handler for GET single record
+   * @return Object
+   */
+  findOneRoute () {
+    return this.getRoute('GET', this.findOne.bind(this));
   }
 
   /**
    * Get HAPI API handler for POST new record
    * @return Object
    */
-  createRoute() {
-    return this._getRoute('POST', this.create.bind(this));
+  createRoute () {
+    return this.getRoute('POST', this.create.bind(this));
   }
 
   /**
    * Get HAPI API handler for PATCH single record
    * @return Object
    */
-  updateOneRoute() {
-    return this._getRoute('PATCH', this.updateOne.bind(this));
+  updateOneRoute () {
+    return this.getRoute('PATCH', this.updateOne.bind(this));
   }
-
 
   /**
    * Get HAPI API handler for PUT single record
    * @return Object
    */
-  replaceOneRoute() {
-    return this._getRoute('PUT', this.replace.bind(this));
+  replaceOneRoute () {
+    return this.getRoute('PUT', this.replace.bind(this));
   }
-
 
   /**
    * Get HAPI API handler for DELETE single record
    * @return Object
    */
-  deleteOneRoute() {
-    return this._getRoute('DELETE', this.delete.bind(this));
+  deleteOneRoute () {
+    return this.getRoute('DELETE', this.delete.bind(this));
   }
 
   /**
    * Get HAPI API handler for PATCH many records
    * @return Object
    */
-  updateManyRoute() {
-    return this._getRoute('PATCH', this.updateMany.bind(this), true);
+  updateManyRoute () {
+    return this.getRoute('PATCH', this.updateMany.bind(this), true);
   }
 
-
-  _getRoute(method, handler, isMany) {
+  getRoute (method, handler, isMany) {
     const { endpoint, table } = this.config;
     const description = `${method} ${isMany ? 'many' : 'single'} ${table} ${isMany ? 'records' : 'record'}`;
     const path = (isMany || method === 'POST') ? endpoint : `${endpoint}/{id}`;
@@ -103,34 +100,32 @@ class RestHAPIInterface {
       path,
       handler,
       config: {
-        description,
-      },
+        description
+      }
     };
   }
-
 
   /**
    * Get HAPI API handler for schema
    * @return Object
    */
-  schemaDefinitionRoute() {
+  schemaDefinitionRoute () {
     const { endpoint, table } = this.config;
     return {
       method: 'GET',
       path: `${endpoint}/schema`,
       handler: this.schemaDefinition.bind(this),
       config: {
-        description: `Get API schema definition for ${table}`,
-      },
+        description: `Get API schema definition for ${table}`
+      }
     };
   }
-
 
   /**
    * Get HAPI route config for API
    * @return {Array} - HAPI route config
    */
-  getRoutes() {
+  getRoutes () {
     return [
       this.findManyRoute(),
       this.findOneRoute(),
@@ -139,10 +134,9 @@ class RestHAPIInterface {
       this.replaceOneRoute(),
       this.deleteOneRoute(),
       this.updateManyRoute(),
-      this.schemaDefinitionRoute(),
+      this.schemaDefinitionRoute()
     ];
   }
 }
-
 
 module.exports = RestHAPIInterface;
